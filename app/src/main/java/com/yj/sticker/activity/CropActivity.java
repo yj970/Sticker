@@ -43,9 +43,6 @@ public class CropActivity extends AppCompatActivity {
             ImageUtil.save2Picture(this, cropBitmap);
         });
 
-//        // test todo
-//        String testPath = "/storage/emulated/0/Pictures/f47c818d-a863-4086-a1eb-65f249b01a82.png";
-//        mBinding.cropView.setPicturePath(testPath);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

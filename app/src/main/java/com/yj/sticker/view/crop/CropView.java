@@ -74,7 +74,7 @@ public class CropView extends View {
     // 裁剪
     public Bitmap crop() {
         RectF matrixCropRectF = mRectFCrop.getMatrixCropRectF();
-        Bitmap bitmap = Bitmap.createBitmap(mSourceBitmap, (int)matrixCropRectF.left, (int)matrixCropRectF.top, (int)matrixCropRectF.width(),(int)matrixCropRectF.height());
+        Bitmap bitmap = Bitmap.createBitmap(mSourceBitmap, (int) matrixCropRectF.left, (int) matrixCropRectF.top, (int) matrixCropRectF.width(), (int) matrixCropRectF.height());
         return bitmap;
     }
 }

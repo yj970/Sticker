@@ -11,41 +11,33 @@ import android.view.View;
 
 import com.yj.sticker.R;
 
-import dev.utils.app.ScreenUtils;
-import dev.utils.app.logger.DevLogger;
 
 public class RectFCrop extends CropChild {
     private static final String TAG = "RectFCrop";
-    private Matrix mRectFMatrix = new Matrix();
+    private Matrix mMatrix = new Matrix();
     private float mOldMoveX;
     private float mOldMoveY;
-    private RectF mCropRectF = new RectF();// 裁剪区
-    private Paint mCropRectFPaint;
-    private final int mCornerHalfWidth = 50;
-
-    private boolean isTouchLeftTopCorner;
-    private boolean isTouchRightTopCorner;
-    private boolean isTouchLeftBottomCorner;
-    private boolean isTouchRightBottomCorner;
-
-
-    private RectF mLeftTopRectF = new RectF();
-    private RectF mRightTopRectF = new RectF();
-    private RectF mLeftBottomRectF = new RectF();
-    private RectF mRightBottomRectF = new RectF();
-
     private float mDownX;
     private float mDownY;
-
+    private Paint mCropRectFPaint;
+    private Paint mFramePaint;
+    private boolean isTouchLeftTopCorner;// 是否触碰左上角
+    private boolean isTouchRightTopCorner;// 是否触碰右上角
+    private boolean isTouchLeftBottomCorner; // 是否触碰左下角
+    private boolean isTouchRightBottomCorner;// 是否触碰右下角
+    private RectF mCropRectF = new RectF();// 裁剪区
+    private RectF mFrameRectF = new RectF();// 边框
+    private RectF mLeftTopRectF = new RectF();// 左上角触碰判定区域
+    private RectF mRightTopRectF = new RectF();// 右上角触碰判定区域
+    private RectF mLeftBottomRectF = new RectF();// 左下角触碰判定区域
+    private RectF mRightBottomRectF = new RectF();// 右下角触碰判定区域
     private float mThreshold = 2;// 阙值
+    private final int mFrameWidth = 6;// 边框宽度（要能被2整除）
+    private final int mCornerHalfWidth = 50;// 4个角的一半宽度
+    private float DEFAULT_CROP_RECT_WIDTH = 500;// 默认裁剪范围的宽度
+    private float DEFAULT_CROP_RECT_HEIGHT = 300;// 默认裁剪范围的高度
     private boolean mShowCornerRect = false;// 显示4个边角
     private boolean mShowFrame = true;// 显示边框
-    private final int mFrameWidth = 6;
-    private Paint mFramePaint;
-    private RectF mFrameRectF = new RectF();// 边框
-    private float DEFAULT_CROP_RECT_WIDTH = 500;
-    private float DEFAULT_CROP_RECT_HEIGHT = 300;
-
 
     public RectFCrop(View parent) {
         super(parent);
@@ -57,7 +49,6 @@ public class RectFCrop extends CropChild {
 
         mCropRectFPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mCropRectFPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-
 
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint.setColor(parent.getContext().getResources().getColor(R.color.primary_light));
@@ -147,17 +138,13 @@ public class RectFCrop extends CropChild {
         // 设置混合模式
         mCropRectFPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         // 使用matrix
-        canvas.concat(mRectFMatrix);
+        canvas.concat(mMatrix);
         // 绘制裁剪区
         canvas.drawRect(mCropRectF, mCropRectFPaint);
         // 清除混合模式
         mCropRectFPaint.setXfermode(null);
         // 绘制4个边框
         if (mShowFrame) {
-//            canvas.drawLine(mRectF.left - mFrameWidth / 2, mRectF.top, mRectF.left - mFrameWidth / 2, mRectF.bottom, mFramePaint);
-//            canvas.drawLine(mRectF.left - mFrameWidth, mRectF.top - mFrameWidth / 2, mRectF.right + mFrameWidth, mRectF.top - mFrameWidth / 2, mFramePaint);
-//            canvas.drawLine(mRectF.right + mFrameWidth / 2, mRectF.top, mRectF.right + mFrameWidth / 2, mRectF.bottom, mFramePaint);
-//            canvas.drawLine(mRectF.right + mFrameWidth, mRectF.bottom + mFrameWidth / 2, mRectF.left - mFrameWidth, mRectF.bottom + mFrameWidth / 2, mFramePaint);
             canvas.drawRect(mFrameRectF, mFramePaint);
         }
 
@@ -173,13 +160,13 @@ public class RectFCrop extends CropChild {
     }
 
     private void postTranslate(float offSetX, float offsetY) {
-        mRectFMatrix.postTranslate(offSetX, offsetY);
+        mMatrix.postTranslate(offSetX, offsetY);
     }
 
     // 是否触碰到rectF
     public boolean isTouch(float x, float y) {
         RectF rectF = new RectF();
-        mRectFMatrix.mapRect(rectF, mCropRectF);
+        mMatrix.mapRect(rectF, mCropRectF);
         rectF.inset(-mCornerHalfWidth, -mCornerHalfWidth);
         return rectF.contains(x, y);
     }
@@ -235,13 +222,13 @@ public class RectFCrop extends CropChild {
 
     public RectF getMatrixCropRectF() {
         RectF rectF = new RectF();
-        mRectFMatrix.mapRect(rectF, mCropRectF);
+        mMatrix.mapRect(rectF, mCropRectF);
         return rectF;
     }
 
     private RectF getMatrixFrameRectF() {
         RectF rectF = new RectF();
-        mRectFMatrix.mapRect(rectF, mFrameRectF);
+        mMatrix.mapRect(rectF, mFrameRectF);
         return rectF;
     }
 
